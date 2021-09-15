@@ -1,40 +1,37 @@
-use std::cmp;
+use std::cmp::Ordering::*;
 use std::io::*;
 use std::str::FromStr;
-
-fn main() {
+fn main(){
     let cin = stdin();
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
-    let n: usize = sc.next();
+    
+    
+    let mut taro_score: u32 = 0;
+    let mut hanako_score: u32 = 0;
 
+    let n: u32 = sc.next();
     for _ in 0..n {
-        let X: String = sc.next();
-        let Y: String = sc.next();
-
-        let count = longest_common_subsequence(X, Y);
-        println!("{}", count);
-    }
-}
-
-fn longest_common_subsequence(X: String, Y: String) -> usize {
-    let mut c = [[0; 1001]; 1001];
-    let m = X.len();
-    let n = Y.len();
-    let mut maxl = 0;
-
-    for i in 1..=m {
-        for j in 1..=n {
-            if X.get(i - 1..i) == Y.get(j - 1..j) {
-                c[i][j] = c[i - 1][j - 1] + 1;
-            } else {
-                c[i][j] = cmp::max(c[i][j - 1], c[i - 1][j]);
+        let t: String = sc.next();
+        let h: String = sc.next();
+        match t.cmp(&h) {
+            Greater => {
+                taro_score += 3;
             }
-            maxl = cmp::max(maxl, c[i][j]);
+            Equal => {
+                taro_score += 1;
+                hanako_score += 1;
+            }
+            Less => {
+                hanako_score += 3;
+            }
         }
     }
-    maxl
+    println!("{} {}", taro_score, hanako_score);
+    
 }
+
+
 
 /* ========== Scanner ========== */
 
@@ -81,3 +78,14 @@ impl<R: Read> Scanner<R> {
         self.next::<String>().chars().next().unwrap()
     }
 }
+
+
+
+
+
+
+
+
+
+
+

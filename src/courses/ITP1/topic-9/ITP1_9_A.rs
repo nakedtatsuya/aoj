@@ -1,39 +1,25 @@
-use std::cmp;
 use std::io::*;
 use std::str::FromStr;
-
-fn main() {
+fn main(){
     let cin = stdin();
-    let cin = cin.lock();
-    let mut sc = Scanner::new(cin);
-    let n: usize = sc.next();
+    let mut sc = Scanner::new(cin.lock());
 
-    for _ in 0..n {
-        let X: String = sc.next();
-        let Y: String = sc.next();
-
-        let count = longest_common_subsequence(X, Y);
-        println!("{}", count);
-    }
-}
-
-fn longest_common_subsequence(X: String, Y: String) -> usize {
-    let mut c = [[0; 1001]; 1001];
-    let m = X.len();
-    let n = Y.len();
-    let mut maxl = 0;
-
-    for i in 1..=m {
-        for j in 1..=n {
-            if X.get(i - 1..i) == Y.get(j - 1..j) {
-                c[i][j] = c[i - 1][j - 1] + 1;
-            } else {
-                c[i][j] = cmp::max(c[i][j - 1], c[i - 1][j]);
-            }
-            maxl = cmp::max(maxl, c[i][j]);
+    let W = sc.next::<String>();
+    
+    let mut T: Vec<String> = vec![];
+    
+    loop {
+        let mut text_line = sc.next::<String>();
+        if &text_line == "END_OF_TEXT" {
+            break;
         }
+        
+        T.push(text_line.to_ascii_lowercase());
     }
-    maxl
+    
+    let a: Vec<&String> = T.iter().filter(|&t| t == &W).collect();
+    
+    println!("{}", a.len());
 }
 
 /* ========== Scanner ========== */
@@ -77,7 +63,27 @@ impl<R: Read> Scanner<R> {
         (0..n).map(|_| self.next()).collect()
     }
 
+    fn chars(&mut self) -> Vec<char> {
+        self.next::<String>().chars().collect()
+    }
+
     fn char(&mut self) -> char {
-        self.next::<String>().chars().next().unwrap()
+        self.chars()[0]
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

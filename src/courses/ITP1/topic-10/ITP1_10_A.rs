@@ -1,40 +1,24 @@
-use std::cmp;
 use std::io::*;
 use std::str::FromStr;
-
-fn main() {
+fn main(){
     let cin = stdin();
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
-    let n: usize = sc.next();
 
-    for _ in 0..n {
-        let X: String = sc.next();
-        let Y: String = sc.next();
+    let x1: f64 = sc.next();
+    let y1: f64 = sc.next();
+    let x2: f64 = sc.next();
+    let y2: f64 = sc.next();
+    
+    // let res = (1f64 - 0f64).pow(2) + (1f64 - 0f64).pow(2);
+    let x = (x2 - x1).powf(2.0);
+    let y = (y2 - y1).powf(2.0);
 
-        let count = longest_common_subsequence(X, Y);
-        println!("{}", count);
-    }
+    // let res: f64 = res.parse::<f64>().unwrap();
+
+    println!("{}", (x + y).sqrt());
 }
 
-fn longest_common_subsequence(X: String, Y: String) -> usize {
-    let mut c = [[0; 1001]; 1001];
-    let m = X.len();
-    let n = Y.len();
-    let mut maxl = 0;
-
-    for i in 1..=m {
-        for j in 1..=n {
-            if X.get(i - 1..i) == Y.get(j - 1..j) {
-                c[i][j] = c[i - 1][j - 1] + 1;
-            } else {
-                c[i][j] = cmp::max(c[i][j - 1], c[i - 1][j]);
-            }
-            maxl = cmp::max(maxl, c[i][j]);
-        }
-    }
-    maxl
-}
 
 /* ========== Scanner ========== */
 
@@ -81,3 +65,16 @@ impl<R: Read> Scanner<R> {
         self.next::<String>().chars().next().unwrap()
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

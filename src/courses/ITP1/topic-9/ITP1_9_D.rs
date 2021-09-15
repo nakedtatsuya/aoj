@@ -1,40 +1,40 @@
-use std::cmp;
 use std::io::*;
 use std::str::FromStr;
-
-fn main() {
+fn main(){
     let cin = stdin();
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
-    let n: usize = sc.next();
+
+    let mut text: String = sc.next();
+    let n: u32 = sc.next();
+    
 
     for _ in 0..n {
-        let X: String = sc.next();
-        let Y: String = sc.next();
+        let s: String = sc.next();
+        let a: usize = sc.next();
+        let b: usize = sc.next::<usize>() + 1;
 
-        let count = longest_common_subsequence(X, Y);
-        println!("{}", count);
-    }
-}
-
-fn longest_common_subsequence(X: String, Y: String) -> usize {
-    let mut c = [[0; 1001]; 1001];
-    let m = X.len();
-    let n = Y.len();
-    let mut maxl = 0;
-
-    for i in 1..=m {
-        for j in 1..=n {
-            if X.get(i - 1..i) == Y.get(j - 1..j) {
-                c[i][j] = c[i - 1][j - 1] + 1;
-            } else {
-                c[i][j] = cmp::max(c[i][j - 1], c[i - 1][j]);
-            }
-            maxl = cmp::max(maxl, c[i][j]);
+        match s.as_ref() {
+            "print" => {
+                println!("{}", &text[a..b]);
+            },
+            "reverse" => {
+                let x = &text[..a];
+                let y = &text[a..b].chars().rev().collect::<String>();
+                let z = &text[b..];
+                text = format!("{}{}{}", x, y, z);
+            },
+            "replace" => {
+                let replace_text: String = sc.next();
+                let x = &text[..a];
+                let y = &text[b..];
+                text = format!("{}{}{}", x, replace_text, y);
+            },
+            _ => panic!(),
         }
     }
-    maxl
 }
+
 
 /* ========== Scanner ========== */
 
@@ -81,3 +81,15 @@ impl<R: Read> Scanner<R> {
         self.next::<String>().chars().next().unwrap()
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+

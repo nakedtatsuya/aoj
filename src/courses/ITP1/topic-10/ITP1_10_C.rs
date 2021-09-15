@@ -1,39 +1,27 @@
-use std::cmp;
+use std::f64::consts::PI;
 use std::io::*;
 use std::str::FromStr;
-
-fn main() {
+fn main(){
     let cin = stdin();
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
-    let n: usize = sc.next();
 
-    for _ in 0..n {
-        let X: String = sc.next();
-        let Y: String = sc.next();
+    loop {
+        let n: usize = sc.next();
 
-        let count = longest_common_subsequence(X, Y);
-        println!("{}", count);
-    }
-}
-
-fn longest_common_subsequence(X: String, Y: String) -> usize {
-    let mut c = [[0; 1001]; 1001];
-    let m = X.len();
-    let n = Y.len();
-    let mut maxl = 0;
-
-    for i in 1..=m {
-        for j in 1..=n {
-            if X.get(i - 1..i) == Y.get(j - 1..j) {
-                c[i][j] = c[i - 1][j - 1] + 1;
-            } else {
-                c[i][j] = cmp::max(c[i][j - 1], c[i - 1][j]);
-            }
-            maxl = cmp::max(maxl, c[i][j]);
+        if n == 0 {
+            break;
         }
+
+        let mut s1: f64 = 0.;
+        let mut s2: f64 = 0.;
+        for _ in 0..n {
+            let s: f64 = sc.next();
+            s1 += s;
+            s2 += s.powi(2);
+        }
+        println!("{:.8}", ((s2 / n as f64) - (s1 / n as f64).powi(2)).sqrt());
     }
-    maxl
 }
 
 /* ========== Scanner ========== */
@@ -81,3 +69,16 @@ impl<R: Read> Scanner<R> {
         self.next::<String>().chars().next().unwrap()
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
