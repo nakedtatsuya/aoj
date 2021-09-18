@@ -1,5 +1,4 @@
-use std::cmp;
-use std::io::*;
+use std::{io::*, vec};
 use std::str::FromStr;
 
 fn main() {
@@ -7,23 +6,36 @@ fn main() {
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
     let n: usize = sc.next();
-    let mut p = [0; 101];
-    let mut m = [[0; 101]; 101];
-    for i in 1..=n {
-        p[i - 1] = sc.next();
-        p[i] = sc.next();
-    }
 
-    for l in 2..=n {
-        for i in 1..=n-l+1 {
-            let j = i + l - 1;
-            m[i][j] = std::u32::MAX;
-            for k in i..j {
-                m[i][j] = cmp::min(m[i][j], m[i][k] + m[k + 1][j] + p[i - 1] * p[k] * p[j]);
-            }
+    let mut A: Vec<usize> = vec![0; n];
+    for i in 0..n {
+        A[i] = sc.next();
+    }
+    let r = A.len() - 1;
+    let q = partition(&mut A, 0, r);
+
+    print!("{}", A[0]);
+    for i in 1..n {
+        if i == q {
+            print!(" [{}]", A[i]);
+        } else {
+            print!(" {}", A[i]);
         }
     }
-    println!("{}", m[1][n]);
+    print!("\n");
+}
+
+fn partition(A: &mut Vec<usize>, p: usize, r: usize) -> usize {
+    let x = A[r];
+    let mut i = p;
+    for j in p..r {
+        if A[j] <= x {
+            A.swap(i, j);
+            i += 1;
+        }
+    }
+    A.swap(i, r);
+    i
 }
 
 /* ========== Scanner ========== */
@@ -71,3 +83,7 @@ impl<R: Read> Scanner<R> {
         self.next::<String>().chars().next().unwrap()
     }
 }
+
+
+
+

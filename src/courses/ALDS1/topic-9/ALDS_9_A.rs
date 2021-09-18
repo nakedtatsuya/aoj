@@ -1,30 +1,39 @@
-use std::cmp;
-use std::io::*;
 use std::str::FromStr;
+use std::{io::*};
 
 fn main() {
     let cin = stdin();
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
     let n: usize = sc.next();
-    let mut p = [0; 101];
-    let mut m = [[0; 101]; 101];
+    let mut A: Vec<isize> = vec![0; n+1];
     for i in 1..=n {
-        p[i - 1] = sc.next();
-        p[i] = sc.next();
+        A[i] = sc.next();
     }
 
-    for l in 2..=n {
-        for i in 1..=n-l+1 {
-            let j = i + l - 1;
-            m[i][j] = std::u32::MAX;
-            for k in i..j {
-                m[i][j] = cmp::min(m[i][j], m[i][k] + m[k + 1][j] + p[i - 1] * p[k] * p[j]);
-            }
+    for i in 1..=n {
+
+        print!("node {}: key = {}, ", i, A[i]);
+        if i / 2 > 0 {
+            print!("parent key = {}, ", A[i / 2]);
         }
+        if i * 2 <= n {
+            print!("left key = {}, ", A[i * 2]);
+        }
+        if i * 2 + 1 <= n {
+            print!("right key = {}, ", A[i * 2 + 1]);
+        }
+        print!("\n");
     }
-    println!("{}", m[1][n]);
 }
+
+fn max_heapify(A: &mut Vec<isize>, i: usize) {
+    let l = i * 2;
+    let r = i * 2 + 1;
+
+    // if l <= A.len() && A[l-1] > 
+}
+
 
 /* ========== Scanner ========== */
 
@@ -71,3 +80,5 @@ impl<R: Read> Scanner<R> {
         self.next::<String>().chars().next().unwrap()
     }
 }
+
+

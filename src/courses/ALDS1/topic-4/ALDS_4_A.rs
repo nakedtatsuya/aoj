@@ -1,4 +1,3 @@
-use std::cmp;
 use std::io::*;
 use std::str::FromStr;
 
@@ -7,23 +6,25 @@ fn main() {
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
     let n: usize = sc.next();
-    let mut p = [0; 101];
-    let mut m = [[0; 101]; 101];
-    for i in 1..=n {
-        p[i - 1] = sc.next();
-        p[i] = sc.next();
+    let mut a_n: Vec<usize> = Vec::new();
+    for i in 0..n {
+        a_n.push(sc.next());
     }
 
-    for l in 2..=n {
-        for i in 1..=n-l+1 {
-            let j = i + l - 1;
-            m[i][j] = std::u32::MAX;
-            for k in i..j {
-                m[i][j] = cmp::min(m[i][j], m[i][k] + m[k + 1][j] + p[i - 1] * p[k] * p[j]);
+    let t: usize = sc.next();
+    let mut a_t: Vec<usize> = Vec::new();
+    for i in 0..t {
+        let v: usize = sc.next();
+        for i in 0..n {
+            if v == a_n[i] {
+                a_t.push(v);
+                break;
             }
         }
-    }
-    println!("{}", m[1][n]);
+    } 
+
+    println!("{}", a_t.len());
+
 }
 
 /* ========== Scanner ========== */
@@ -71,3 +72,4 @@ impl<R: Read> Scanner<R> {
         self.next::<String>().chars().next().unwrap()
     }
 }
+

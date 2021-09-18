@@ -1,29 +1,32 @@
-use std::cmp;
 use std::io::*;
 use std::str::FromStr;
 
-fn main() {
+fn main(){
     let cin = stdin();
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
     let n: usize = sc.next();
-    let mut p = [0; 101];
-    let mut m = [[0; 101]; 101];
-    for i in 1..=n {
-        p[i - 1] = sc.next();
-        p[i] = sc.next();
+
+    let mut arr: Vec<u32> = vec![];
+    for _ in 0..n {
+        arr.push(sc.next());
     }
 
-    for l in 2..=n {
-        for i in 1..=n-l+1 {
-            let j = i + l - 1;
-            m[i][j] = std::u32::MAX;
-            for k in i..j {
-                m[i][j] = cmp::min(m[i][j], m[i][k] + m[k + 1][j] + p[i - 1] * p[k] * p[j]);
-            }
+    println!("{}", arr.iter().map(|item| item.to_string()).collect::<Vec<_>>().join(" "));
+
+    for i in 1..n {
+        let key = arr[i];
+        let mut j = i;
+
+        while j >= 1 && arr[j-1] > key {
+            arr[j] = arr[j-1];
+            j -= 1;
         }
+        arr[j] = key;
+
+        println!("{}", arr.iter().map(|item| item.to_string()).collect::<Vec<_>>().join(" "));
     }
-    println!("{}", m[1][n]);
+
 }
 
 /* ========== Scanner ========== */
@@ -71,3 +74,16 @@ impl<R: Read> Scanner<R> {
         self.next::<String>().chars().next().unwrap()
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

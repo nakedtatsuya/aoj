@@ -1,29 +1,32 @@
-use std::cmp;
 use std::io::*;
 use std::str::FromStr;
-
-fn main() {
+fn main(){
     let cin = stdin();
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
-    let n: usize = sc.next();
-    let mut p = [0; 101];
-    let mut m = [[0; 101]; 101];
-    for i in 1..=n {
-        p[i - 1] = sc.next();
-        p[i] = sc.next();
-    }
 
-    for l in 2..=n {
-        for i in 1..=n-l+1 {
-            let j = i + l - 1;
-            m[i][j] = std::u32::MAX;
-            for k in i..j {
-                m[i][j] = cmp::min(m[i][j], m[i][k] + m[k + 1][j] + p[i - 1] * p[k] * p[j]);
-            }
+    let n: usize = sc.next();
+    let X: Vec<f64> = (0..n).map(|_| sc.next()).collect();
+    let Y: Vec<f64> = (0..n).map(|_| sc.next()).collect();
+
+    let mut p1 = 0.;
+    let mut p2 = 0.;
+    let mut p3 = 0.;
+    let mut oo = 0.;
+    for i in 0..n {
+        let abs = (X[i] - Y[i]).abs();
+        p1 += abs;
+        p2 += abs.powi(2);
+        p3 += abs.powi(3);
+        if oo < abs {
+            oo = abs;
         }
     }
-    println!("{}", m[1][n]);
+
+    println!("{:.6}", p1);
+    println!("{:.6}", p2.sqrt());
+    println!("{:.6}", p3.cbrt());
+    println!("{:.6}", oo);
 }
 
 /* ========== Scanner ========== */
@@ -71,3 +74,16 @@ impl<R: Read> Scanner<R> {
         self.next::<String>().chars().next().unwrap()
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,29 +1,57 @@
-use std::cmp;
 use std::io::*;
 use std::str::FromStr;
 
-fn main() {
+fn main(){
+
     let cin = stdin();
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
     let n: usize = sc.next();
-    let mut p = [0; 101];
-    let mut m = [[0; 101]; 101];
-    for i in 1..=n {
-        p[i - 1] = sc.next();
-        p[i] = sc.next();
+
+    let mut vec: Vec<usize> = Vec::new();
+    for _ in 0..n {
+        vec.push(sc.next());
+    }
+    
+    fn insertion_sort(A: &mut Vec<usize>, n: usize, g: usize) -> usize {
+        let mut count = 0;
+        for i in g..n {
+            let tmp = A[i];
+            let mut j = i;
+            while j >= g && A[j-g] > tmp {
+                A[j] = A[j-g];
+                j = j - g;
+                count += 1;
+            }
+            A[j] = tmp;
+        }
+        count
     }
 
-    for l in 2..=n {
-        for i in 1..=n-l+1 {
-            let j = i + l - 1;
-            m[i][j] = std::u32::MAX;
-            for k in i..j {
-                m[i][j] = cmp::min(m[i][j], m[i][k] + m[k + 1][j] + p[i - 1] * p[k] * p[j]);
-            }
+    fn shell_sort(A: &mut Vec<usize>, n: usize) {
+        let mut count = 0;
+        let mut h = 1;
+        
+        let mut G = vec![];
+        while h <= n {
+            G.push(h);
+            h = 3 * h + 1;
         }
+        let m = G.len();
+        println!("{}", m);
+        G.reverse();
+        let s = G.iter().map(|x| x.to_string()).collect::<Vec<String>>().join(" ");
+        println!("{}", s);
+
+        for i in 0..m {
+            count += insertion_sort(A, n, G[i]);
+        }
+        println!("{}", count);
     }
-    println!("{}", m[1][n]);
+
+    shell_sort(&mut vec, n);
+    let res: Vec<String> = vec.iter().map(|card| card.to_string()).collect();
+    println!("{}", res.join(" "));
 }
 
 /* ========== Scanner ========== */
@@ -71,3 +99,5 @@ impl<R: Read> Scanner<R> {
         self.next::<String>().chars().next().unwrap()
     }
 }
+
+

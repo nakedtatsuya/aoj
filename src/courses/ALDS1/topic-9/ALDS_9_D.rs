@@ -1,30 +1,71 @@
-use std::cmp;
-use std::io::*;
 use std::str::FromStr;
+use std::{io::*};
 
 fn main() {
     let cin = stdin();
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
     let n: usize = sc.next();
-    let mut p = [0; 101];
-    let mut m = [[0; 101]; 101];
-    for i in 1..=n {
-        p[i - 1] = sc.next();
-        p[i] = sc.next();
+    let mut A: Vec<usize> = vec![0; n];
+    for i in 0..n {
+        A[i] = sc.next();
     }
 
-    for l in 2..=n {
-        for i in 1..=n-l+1 {
-            let j = i + l - 1;
-            m[i][j] = std::u32::MAX;
-            for k in i..j {
-                m[i][j] = cmp::min(m[i][j], m[i][k] + m[k + 1][j] + p[i - 1] * p[k] * p[j]);
-            }
+    A.sort();
+
+    for i in 0..n-1 {
+        let mut j = i;
+        // 根になるまで
+        while j != 0 {
+            let k = (j-1)/2;
+            // 親と交換
+            A.swap(j,k);
+            // 親のIndex割り当て
+            j = k;
         }
+        A.swap(0,i+1);
     }
-    println!("{}", m[1][n]);
+
+
+    for i in 0..n {
+        print!(" {}", A[i]);
+    }
+    print!("\n");
 }
+
+fn max_heapify(A: &mut Vec<usize>, i: usize) {
+    let l = i * 2;
+    let r = i * 2 + 1;
+    let mut largest = i;
+    if l <= A.len() && A[l-1] > A[i-1] {
+        largest = l;
+    }
+
+    if r <= A.len() && A[r-1] > A[largest-1] {
+        largest = r;
+    }
+
+    if largest != i {
+        A.swap(i-1, largest-1);
+        max_heapify(A, largest);
+    }
+}
+
+fn heap_sort(A: &mut Vec<usize>) {
+
+    for i in (1..=A.len()/2).rev() {
+        max_heapify(A, i);
+    }
+
+
+    let mut heap_size = A.len();
+    while heap_size >= 1 {
+        A.swap(0, heap_size-1);
+        heap_size -= 1;
+        max_heapify(A, 1);
+    }
+}
+
 
 /* ========== Scanner ========== */
 
@@ -71,3 +112,5 @@ impl<R: Read> Scanner<R> {
         self.next::<String>().chars().next().unwrap()
     }
 }
+
+

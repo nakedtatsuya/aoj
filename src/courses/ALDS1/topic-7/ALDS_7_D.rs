@@ -1,29 +1,41 @@
-use std::cmp;
-use std::io::*;
 use std::str::FromStr;
+use std::{io::*, vec};
 
 fn main() {
     let cin = stdin();
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
     let n: usize = sc.next();
-    let mut p = [0; 101];
-    let mut m = [[0; 101]; 101];
-    for i in 1..=n {
-        p[i - 1] = sc.next();
-        p[i] = sc.next();
+    let mut pre_o: Vec<usize> = vec![0; n];
+    let mut in_o: Vec<usize> = vec![0; n];
+    let mut pos_o: Vec<usize> = vec![];
+    for i in 0..n {
+        pre_o[i] = sc.next();
     }
 
-    for l in 2..=n {
-        for i in 1..=n-l+1 {
-            let j = i + l - 1;
-            m[i][j] = std::u32::MAX;
-            for k in i..j {
-                m[i][j] = cmp::min(m[i][j], m[i][k] + m[k + 1][j] + p[i - 1] * p[k] * p[j]);
-            }
-        }
+    for i in 0..n {
+        in_o[i] = sc.next();
     }
-    println!("{}", m[1][n]);
+
+    reconstruction(&pre_o, &in_o, &mut pos_o);
+
+    for (i, val) in pos_o.iter().enumerate() {
+        if i > 0 { print!(" "); }
+        print!("{}", val);
+    }
+    print!("\n");
+}
+
+fn reconstruction(pre_o: &[usize], in_o: &[usize], pos_o: &mut Vec<usize>) {
+    if in_o.is_empty() {
+        return;
+    }
+    let r = pre_o[0];
+    let mid = in_o.iter().position(|x| *x == r ).unwrap();
+    reconstruction(&pre_o[1..], &in_o[0..mid], pos_o);
+    reconstruction(&pre_o[mid + 1..], &in_o[mid + 1..], pos_o);
+    pos_o.push(r);
+    
 }
 
 /* ========== Scanner ========== */
@@ -71,3 +83,4 @@ impl<R: Read> Scanner<R> {
         self.next::<String>().chars().next().unwrap()
     }
 }
+

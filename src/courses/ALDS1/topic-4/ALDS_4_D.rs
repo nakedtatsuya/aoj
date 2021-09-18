@@ -1,4 +1,3 @@
-use std::cmp;
 use std::io::*;
 use std::str::FromStr;
 
@@ -7,23 +6,44 @@ fn main() {
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
     let n: usize = sc.next();
-    let mut p = [0; 101];
-    let mut m = [[0; 101]; 101];
-    for i in 1..=n {
-        p[i - 1] = sc.next();
-        p[i] = sc.next();
+    let k: usize = sc.next();
+    let mut vec: Vec<usize> = Vec::new();
+    for _ in 0..n {
+        vec.push(sc.next());
     }
 
-    for l in 2..=n {
-        for i in 1..=n-l+1 {
-            let j = i + l - 1;
-            m[i][j] = std::u32::MAX;
-            for k in i..j {
-                m[i][j] = cmp::min(m[i][j], m[i][k] + m[k + 1][j] + p[i - 1] * p[k] * p[j]);
+    let mut base: usize = *vec.iter().max().unwrap();
+    let mut max: usize = vec.iter().sum();
+
+
+    while base < max {
+        let mid = (base + max) / 2;
+
+        let i = check(n, k, mid, &vec);
+        if i < n {
+            base = mid + 1;
+        } else {
+            max = mid;
+        }
+    }
+
+    println!("{}", max);
+
+}
+
+fn check(n: usize, k: usize, p: usize, ws: &Vec<usize>) -> usize {
+    let mut i = 0;
+    'a: for _ in 0..k {
+        let mut s = 0;
+        while s + ws[i] <= p {
+            s += ws[i];
+            i += 1;
+            if i == n {
+                break 'a;
             }
         }
     }
-    println!("{}", m[1][n]);
+    return i;
 }
 
 /* ========== Scanner ========== */
@@ -71,3 +91,5 @@ impl<R: Read> Scanner<R> {
         self.next::<String>().chars().next().unwrap()
     }
 }
+
+

@@ -1,29 +1,48 @@
-use std::cmp;
 use std::io::*;
 use std::str::FromStr;
+use std::collections::VecDeque;
 
-fn main() {
+fn main(){
+
     let cin = stdin();
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
     let n: usize = sc.next();
-    let mut p = [0; 101];
-    let mut m = [[0; 101]; 101];
-    for i in 1..=n {
-        p[i - 1] = sc.next();
-        p[i] = sc.next();
-    }
 
-    for l in 2..=n {
-        for i in 1..=n-l+1 {
-            let j = i + l - 1;
-            m[i][j] = std::u32::MAX;
-            for k in i..j {
-                m[i][j] = cmp::min(m[i][j], m[i][k] + m[k + 1][j] + p[i - 1] * p[k] * p[j]);
-            }
+    let mut vec: VecDeque<usize> = VecDeque::new();
+    for _ in 0..n {
+        let ord: String = sc.next();
+
+        match ord.as_str() {
+            "insert" => {
+                let v: usize = sc.next();
+                vec.push_front(v);
+            },
+            "delete" => {
+                let v: usize = sc.next();
+                let index = vec.iter().position(|x| *x == v);
+                if let Some(index) = index {
+                    vec.remove(index);
+                }
+            },
+            "deleteFirst" => {
+                vec.pop_front();
+            },
+            "deleteLast" => {
+                vec.pop_back();
+            },
+            _ => {},
         }
     }
-    println!("{}", m[1][n]);
+
+    while !vec.is_empty() {
+        let v = vec.pop_front().unwrap();
+        if !vec.is_empty() {
+            print!("{} ", v);
+        } else {
+            println!("{}", v);
+        }
+    }
 }
 
 /* ========== Scanner ========== */
@@ -71,3 +90,5 @@ impl<R: Read> Scanner<R> {
         self.next::<String>().chars().next().unwrap()
     }
 }
+
+

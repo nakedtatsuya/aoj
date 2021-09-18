@@ -1,5 +1,4 @@
-use std::cmp;
-use std::io::*;
+use std::{io::*, vec};
 use std::str::FromStr;
 
 fn main() {
@@ -7,23 +6,56 @@ fn main() {
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
     let n: usize = sc.next();
-    let mut p = [0; 101];
-    let mut m = [[0; 101]; 101];
-    for i in 1..=n {
-        p[i - 1] = sc.next();
-        p[i] = sc.next();
+
+    let mut m_vec: Vec<i32> = Vec::new();
+    for _ in 0..n {
+        m_vec.push(sc.next());
     }
 
-    for l in 2..=n {
-        for i in 1..=n-l+1 {
-            let j = i + l - 1;
-            m[i][j] = std::u32::MAX;
-            for k in i..j {
-                m[i][j] = cmp::min(m[i][j], m[i][k] + m[k + 1][j] + p[i - 1] * p[k] * p[j]);
-            }
+    let a = m_vec.len();
+
+    let count = merge_sort(&mut m_vec, 0, a);
+    println!("{}", count);
+}
+
+fn merge(a: &mut [i32], left: usize, mid: usize, right: usize) -> usize {
+    let mut count = 0;
+    let mut l = a[left..mid].to_vec();
+    let mut r = a[mid..right].to_vec();
+    // 番兵の挿入
+    l.push(std::i32::MAX);
+    r.push(std::i32::MAX);
+    let mut i = 0;
+    let mut j = 0;
+    for k in left..right {
+        if l[i] <= r[j] {
+            a[k] = l[i];
+            i += 1;
+        } else {
+            a[k] = r[j];
+            j += 1;
+            count += l.len()-1-i;
         }
     }
-    println!("{}", m[1][n]);
+    count
+}
+
+fn merge_sort(a: &mut [i32], left: usize, right: usize) -> usize {
+    let mut count = 0;
+    if left + 1 < right {
+        let mid = (left + right) / 2;
+        count += merge_sort(a, left, mid);
+        count += merge_sort(a, mid, right);
+        count += merge(a, left, mid, right);
+    }
+    count
+}
+
+fn print_vec<T: std::fmt::Display>(v: Vec<T>) {
+    for a in &v[0..v.len() - 1] {
+        print!("{} ", a);
+    }
+    println!("{}", v[v.len() - 1]);
 }
 
 /* ========== Scanner ========== */
@@ -71,3 +103,7 @@ impl<R: Read> Scanner<R> {
         self.next::<String>().chars().next().unwrap()
     }
 }
+
+
+
+

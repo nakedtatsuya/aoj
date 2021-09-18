@@ -1,30 +1,68 @@
-use std::cmp;
-use std::io::*;
 use std::str::FromStr;
+use std::{io::*};
+use std::collections::BinaryHeap;
 
 fn main() {
     let cin = stdin();
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
-    let n: usize = sc.next();
-    let mut p = [0; 101];
-    let mut m = [[0; 101]; 101];
-    for i in 1..=n {
-        p[i - 1] = sc.next();
-        p[i] = sc.next();
-    }
-
-    for l in 2..=n {
-        for i in 1..=n-l+1 {
-            let j = i + l - 1;
-            m[i][j] = std::u32::MAX;
-            for k in i..j {
-                m[i][j] = cmp::min(m[i][j], m[i][k] + m[k + 1][j] + p[i - 1] * p[k] * p[j]);
-            }
+    let mut A: BinaryHeap<isize> = BinaryHeap::new();
+    loop {
+        let n: String = sc.next();
+        match n.as_str() {
+            "insert" => A.push(sc.next()),
+            "extract" => {
+                if let Some(v) = A.pop() {
+                    println!("{}", v);
+                }
+            },
+            _ => break,
         }
     }
-    println!("{}", m[1][n]);
 }
+
+fn max_heapify(A: &mut Vec<isize>, i: usize) {
+    let l = i * 2;
+    let r = i * 2 + 1;
+    let mut largest = i;
+    if l <= A.len()-1 && A[l] > A[i] {
+        largest = l;
+    }
+
+    if r <= A.len()-1 && A[r] > A[largest] {
+        largest = r;
+    }
+
+    if largest != i {
+        A.swap(i, largest);
+        max_heapify(A, largest);
+    }
+}
+
+fn insert(A: &mut Vec<isize>, v: isize) {
+    A.push(v);
+    
+    if v < A[A.len()/2] {
+        return;
+    }
+
+    for i in (1..=A.len()/2).rev() {
+        max_heapify(A, i);
+    }
+}
+
+fn extract(A: &mut Vec<isize>) {
+    let h = A.len()-1;
+    if h < 1 {
+        panic!("empty");
+    }
+    let max = A[1];
+    A[1] = A[h];
+    A.pop();
+    max_heapify(A, 1);
+    println!("{}", max);
+}
+
 
 /* ========== Scanner ========== */
 
@@ -71,3 +109,5 @@ impl<R: Read> Scanner<R> {
         self.next::<String>().chars().next().unwrap()
     }
 }
+
+

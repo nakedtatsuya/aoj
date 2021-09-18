@@ -1,29 +1,62 @@
-use std::cmp;
 use std::io::*;
 use std::str::FromStr;
+use std::collections::VecDeque;
 
-fn main() {
+struct Process {
+    name: String,
+    time: usize,
+}
+
+impl Process {
+    pub fn new(name: String, time: usize) -> Self {
+        Process {
+            name,
+            time
+        }
+    }
+
+    pub fn culc_time(&mut self, time: usize) {
+        self.time =  self.time - time;
+    }
+
+    pub fn is_over(&self, time: usize) -> bool {
+        self.time > time
+    }
+
+    pub fn need_time(&mut self, total_time: usize) {
+        self.time = total_time;
+    }
+}
+
+fn main(){
+
     let cin = stdin();
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
     let n: usize = sc.next();
-    let mut p = [0; 101];
-    let mut m = [[0; 101]; 101];
-    for i in 1..=n {
-        p[i - 1] = sc.next();
-        p[i] = sc.next();
+    let q: usize = sc.next();
+
+    let mut vec: VecDeque<Process> = VecDeque::new();
+    for _ in 0..n {
+        vec.push_back(Process::new(sc.next(), sc.next()));
     }
 
-    for l in 2..=n {
-        for i in 1..=n-l+1 {
-            let j = i + l - 1;
-            m[i][j] = std::u32::MAX;
-            for k in i..j {
-                m[i][j] = cmp::min(m[i][j], m[i][k] + m[k + 1][j] + p[i - 1] * p[k] * p[j]);
-            }
+
+    let mut total_ms: usize = 0;
+
+    while vec.len() != 0 {
+        let mut cur = vec.pop_front().unwrap();
+        if !cur.is_over(q) {
+            total_ms += cur.time;
+            cur.need_time(total_ms);
+            println!("{} {}", cur.name, cur.time);
+        } else {
+            total_ms += q;
+            cur.culc_time(q);
+            vec.push_back(cur);
         }
-    }
-    println!("{}", m[1][n]);
+    }    
+
 }
 
 /* ========== Scanner ========== */
@@ -71,3 +104,5 @@ impl<R: Read> Scanner<R> {
         self.next::<String>().chars().next().unwrap()
     }
 }
+
+

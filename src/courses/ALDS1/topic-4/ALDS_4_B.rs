@@ -1,29 +1,50 @@
-use std::cmp;
 use std::io::*;
 use std::str::FromStr;
+use std::cmp::Ordering::{self, Equal, Greater, Less};
+use std::result::Result;
 
 fn main() {
     let cin = stdin();
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
     let n: usize = sc.next();
-    let mut p = [0; 101];
-    let mut m = [[0; 101]; 101];
-    for i in 1..=n {
-        p[i - 1] = sc.next();
-        p[i] = sc.next();
+    let mut a_n: Vec<usize> = Vec::new();
+    for i in 0..n {
+        a_n.push(sc.next());
     }
+    a_n.sort();
 
-    for l in 2..=n {
-        for i in 1..=n-l+1 {
-            let j = i + l - 1;
-            m[i][j] = std::u32::MAX;
-            for k in i..j {
-                m[i][j] = cmp::min(m[i][j], m[i][k] + m[k + 1][j] + p[i - 1] * p[k] * p[j]);
-            }
+    let t: usize = sc.next();
+    let mut a_t: Vec<usize> = Vec::new();
+    for _ in 0..t {
+        let v: usize = sc.next();
+
+        if let Ok(v) = binary_search(&a_n, v) {
+            a_t.push(v);
         }
+    } 
+
+    println!("{}", a_t.len());
+
+}
+
+fn binary_search(arr: &Vec<usize>, t: usize) -> Result<usize, usize> {
+    let mut size = arr.len();
+    if size == 0 {
+        return Err(0);
     }
-    println!("{}", m[1][n]);
+    let mut base = 0;
+
+    
+    while size > 1 {
+        let half = size / 2;
+        let mid = half + base;
+        let res = arr[mid].cmp(&t);
+        if res == Equal { return Ok(t) }
+        base = if res == Greater { base } else { mid };
+        size -= half;
+    }
+    Err(0)
 }
 
 /* ========== Scanner ========== */
@@ -71,3 +92,5 @@ impl<R: Read> Scanner<R> {
         self.next::<String>().chars().next().unwrap()
     }
 }
+
+
