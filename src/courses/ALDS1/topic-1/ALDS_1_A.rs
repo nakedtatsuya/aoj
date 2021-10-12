@@ -6,27 +6,51 @@ fn main(){
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
     let n: usize = sc.next();
-
+    let p: Vec<f64> = (0..n).map(|_| sc.next()).collect();
+    let q: Vec<f64> = (0..=n).map(|_| sc.next()).collect();
+    let mut x = vec![0 as f64; p.len() + q.len()];
+    let mut mem = vec![vec![None; 2*n+2]; 2*n+2];
     let mut arr: Vec<u32> = vec![];
-    for _ in 0..n {
-        arr.push(sc.next());
-    }
-
-    println!("{}", arr.iter().map(|item| item.to_string()).collect::<Vec<_>>().join(" "));
-
-    for i in 1..n {
-        let key = arr[i];
-        let mut j = i;
-
-        while j >= 1 && arr[j-1] > key {
-            arr[j] = arr[j-1];
-            j -= 1;
+    for i in 0..x.len() {
+        if i % 2 == 0 {
+            x[i] = q[i / 2];
         }
-        arr[j] = key;
-
-        println!("{}", arr.iter().map(|item| item.to_string()).collect::<Vec<_>>().join(" "));
+        else {
+            x[i] = p[i / 2];
+        }
     }
 
+    println!("{}", dfs(0, x.len(), 1, &x, &mut mem));
+
+}
+
+fn dfs(l: usize, r: usize, d: i32, p: &Vec<f64>, mem: &mut Vec<Vec<Option<f64>>>) -> f64 {
+    if r - l == 1 {
+        return p[l];
+    }
+    else if r <= l {
+        return 0 as f64;
+    }
+    else if let Some(ret) = mem[l][r] {
+        return ret;
+    }
+
+    let mut ret = 5000.0;
+    for mid in l..r {
+        if mid % 2 == 0 {
+            continue;
+        }
+        let a = dfs(l, mid, d + 1, p, mem) + dfs(mid + 1, r, d + 1, p, mem);
+        if ret > a {
+            ret = a;
+        }
+    }
+    for i in l..r {
+        ret += p[i];
+    }
+
+    mem[l][r] = Some(ret);
+    return ret;
 }
 
 /* ========== Scanner ========== */
@@ -74,16 +98,3 @@ impl<R: Read> Scanner<R> {
         self.next::<String>().chars().next().unwrap()
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

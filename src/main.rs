@@ -1,29 +1,81 @@
-use std::cmp;
 use std::io::*;
 use std::str::FromStr;
-
 fn main() {
     let cin = stdin();
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
     let n: usize = sc.next();
-    let mut p = [0; 101];
-    let mut m = [[0; 101]; 101];
-    for i in 1..=n {
-        p[i - 1] = sc.next();
-        p[i] = sc.next();
+    let k: isize = sc.next();
+    let mut b = vec![0; 1 + n as usize];
+
+    for i in 1..n+1 {
+        b[i] = b[i - 1];
+        let munber: isize = sc.next();
+        b[i] += munber - k;
     }
 
-    for l in 2..=n {
-        for i in 1..=n-l+1 {
-            let j = i + l - 1;
-            m[i][j] = std::u32::MAX;
-            for k in i..j {
-                m[i][j] = cmp::min(m[i][j], m[i][k] + m[k + 1][j] + p[i - 1] * p[k] * p[j]);
+    let mut bit = Bit::new(b.clone());
+    let mut l = 0;
+    let mut ans = 0;
+    for i in 0..n{
+        ans += bit.sum(l + 1);
+        bit.add(l,1);
+    }
+
+    
+
+    let count = bubble_sort(&mut b);
+
+    println!("{:?}", count);
+
+
+}
+
+struct Bit {
+    n:usize,
+    bit:Vec<isize>
+}
+impl Bit {
+    fn new(b: Vec<isize>) -> Self {
+        let len = b.len();
+        Bit {
+            bit:b,
+            n: len,
+        }
+    }
+    fn add(&mut self,mut id:usize,x:isize){
+        id += 1;
+        while id <= self.n {
+            self.bit[id] += x;
+            let i = id as isize;
+            id += (i & (-i)) as usize;
+        }
+    }
+    //sum of [0,i)
+    fn sum(&mut self, mut id:usize) -> isize {
+        let mut s:isize = 0;
+        let mut i = id as isize;
+        while i > 0 {
+            id = i as usize;
+            s += self.bit[id];
+            i -= i & (-i);
+        }
+        s
+    }
+}
+
+
+fn bubble_sort(a: &mut [isize]) -> usize {
+    let mut count = 0;
+    for i in 0..a.len() {
+        for j in (i+1..a.len()).rev() {
+            if a[j] >= a[j-1] {
+                a.swap(j, j-1);
+                count += 1
             }
         }
     }
-    println!("{}", m[1][n]);
+    count
 }
 
 /* ========== Scanner ========== */
