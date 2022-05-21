@@ -1,82 +1,75 @@
+use std::usize::MAX;
 use std::io::*;
 use std::str::FromStr;
+use std::cmp::Ordering;
+use std::collections::{BinaryHeap, HashSet};
+use std::io::*;
+
+#[derive(Eq, PartialEq, Clone, Copy, PartialOrd, Ord)]
+struct Node {
+    point: usize,
+    cost: usize
+}
+
+
 fn main() {
     let cin = stdin();
     let cin = cin.lock();
     let mut sc = Scanner::new(cin);
     let n: usize = sc.next();
-    let k: isize = sc.next();
-    let mut b = vec![0; 1 + n as usize];
-
-    for i in 1..n+1 {
-        b[i] = b[i - 1];
-        let munber: isize = sc.next();
-        b[i] += munber - k;
-    }
-
-    let mut bit = Bit::new(b.clone());
-    let mut l = 0;
-    let mut ans = 0;
-    for i in 0..n{
-        ans += bit.sum(l + 1);
-        bit.add(l,1);
-    }
-
-    
-
-    let count = bubble_sort(&mut b);
-
-    println!("{:?}", count);
+    let mut g: Vec<Vec<usize>> = vec![vec![]; n];
 
 
-}
+    for _ in 0..n {
+        let u: usize = sc.next();
+        let k: usize = sc.next();
 
-struct Bit {
-    n:usize,
-    bit:Vec<isize>
-}
-impl Bit {
-    fn new(b: Vec<isize>) -> Self {
-        let len = b.len();
-        Bit {
-            bit:b,
-            n: len,
+        for _ in 0..k {
+            let v: usize = sc.next();
+            let c: usize = sc.next();
+            g[u][v] = c;
         }
     }
-    fn add(&mut self,mut id:usize,x:isize){
-        id += 1;
-        while id <= self.n {
-            self.bit[id] += x;
-            let i = id as isize;
-            id += (i & (-i)) as usize;
-        }
-    }
-    //sum of [0,i)
-    fn sum(&mut self, mut id:usize) -> isize {
-        let mut s:isize = 0;
-        let mut i = id as isize;
-        while i > 0 {
-            id = i as usize;
-            s += self.bit[id];
-            i -= i & (-i);
-        }
-        s
+
+    let mut heap: BinaryHeap<Node> = BinaryHeap::new();
+
+
+    for i in 0..n {
+        let cost = get_route(&g,i);
+        println!("{} {}", i, cost);
+        // println!("{}", Prim::solve(g));
     }
 }
 
+fn get_route(g: &Vec<Vec<usize>>, end: usize) -> usize {
+    const INF: usize = 1 << 60;
+    let n = g.len();
+    let mut d = vec![INF; n];
+    let mut used = vec![false; n];
+    d[0] = 0;
+    loop {
+        let mut mincost = INF;
+        let mut u: usize = 0;
+        for i in 0..n {
+            if !used[i] && d[i] < mincost {
+                mincost = d[i];
+                u = i;
+            }
+        }
+        if mincost == INF {break;}
+        used[u] = true;
 
-fn bubble_sort(a: &mut [isize]) -> usize {
-    let mut count = 0;
-    for i in 0..a.len() {
-        for j in (i+1..a.len()).rev() {
-            if a[j] >= a[j-1] {
-                a.swap(j, j-1);
-                count += 1
+        for v in 0..n {
+            if g[u][v] != MAX {
+                d[v] = d[v].min(d[u] + g[u][v]);
             }
         }
     }
-    count
+
+    return d[end];
 }
+
+
 
 /* ========== Scanner ========== */
 
